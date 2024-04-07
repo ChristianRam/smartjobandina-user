@@ -5,20 +5,21 @@ Project built in Spring Boot with user functionalities.
 
 ## Requirements
 - Java 17
+- Git
 
 ## Instalation
 1. Clone the repository to your local machine:
 ```console
-   git clone https://github.com/ChristianRam/operator-api.git
+   https://github.com/ChristianRam/smartjobandina-user.git
    ```
 2. Navigate to the project directory.
 3. Compile the project by running:
 ```console
-   .\gradlew clean build
+   .\mvnw compile
    ```
-4. Start application by running gradle task:
+4. Start application by running maven task:
 ```console
-   .\gradlew bootRun
+   .\mvnw spring-boot:run
    ```
 
 
@@ -26,4 +27,4 @@ Project built in Spring Boot with user functionalities.
 Acces to Swagger UI using endpoint `/swagger-ui/index.html` in root URI
 
 ## Notes
-You can find the app deployed in: [Operator-api](http://ec2-3-89-56-177.compute-1.amazonaws.com:8080/swagger-ui/index.html)
+- In project root directory there is a postman collection to test endpoints
