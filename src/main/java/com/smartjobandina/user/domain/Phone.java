@@ -1,0 +1,31 @@
+package com.smartjobandina.user.domain;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UuidGenerator;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity(name = "phones")
+public class Phone {
+
+    @Id
+    @UuidGenerator
+    private String id;
+
+    @Column(nullable = false)
+    private String number;
+
+    @Column(nullable = false)
+    private String citycode;
+
+    @Column(nullable = false)
+    private String countrycode;
+}
