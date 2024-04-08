@@ -16,6 +16,10 @@ public final class ResourceEndpoint {
      */
     public static final String REGISTER = "/register";
 
+    public static final String AUTHENTICATE = "/authenticate";
+    public static final String LOGOUT = "/logout";
+
+
     public static final String ADMIN = "/admin";
     public static final String FIND_ALL = "/find-all";
 }

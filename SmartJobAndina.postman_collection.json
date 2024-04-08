@@ -67,6 +67,36 @@
 			"response": []
 		},
 		{
+			"name": "Authenticate user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"juanitopere@gmail.com\",\r\n    \"password\": \"Junit2s\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/users/auth/authenticate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"auth",
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Find all",
 			"request": {
 				"auth": {
@@ -74,7 +104,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdWFuaXRvcGVyZUBnbWFpbC5jb20iLCJpYXQiOjE3MTI1MjE2ODIsImV4cCI6MTcxMjYwODA4Mn0.3x3knTNmVx8MFtWMgdwg078pCQhD0niT-ldmS25Be3c",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdWFuaXRvcGVyZUBnbWFpbC5jb20iLCJpYXQiOjE3MTI1NDQyMTgsImV4cCI6MTcxMjYzMDYxOH0.KOB_vi6mJbI3NAvdLh9-Cpm3wGxcXibiXZDdkZMk7Uw",
 							"type": "string"
 						}
 					]
@@ -91,6 +121,37 @@
 					"path": [
 						"admin",
 						"find-all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdWFuaXRvcGVyZUBnbWFpbC5jb20iLCJpYXQiOjE3MTI1NDQyMTgsImV4cCI6MTcxMjYzMDYxOH0.KOB_vi6mJbI3NAvdLh9-Cpm3wGxcXibiXZDdkZMk7Uw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/users/auth/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"auth",
+						"logout"
 					]
 				}
 			},

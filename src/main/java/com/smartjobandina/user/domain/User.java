@@ -18,7 +18,8 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "users")
+@Entity
+@Table(name = "users")
 public class User implements UserDetails {
     @Id
     @UuidGenerator
@@ -61,11 +62,6 @@ public class User implements UserDetails {
         setCreateDate(now);
         setLastLogin(now);
         setIsActive(true);
-    }
-
-    @PreUpdate
-    public void onPreUpdate() {
-        setLastModified(LocalDateTime.now());
     }
 
     @Override

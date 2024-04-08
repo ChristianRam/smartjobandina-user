@@ -1,5 +1,7 @@
 package com.smartjobandina.user.service;
 
+import com.smartjobandina.user.domain.dto.AuthenticationRequestDto;
+import com.smartjobandina.user.domain.dto.AuthenticationResponseDto;
 import com.smartjobandina.user.domain.dto.RegisterResponseDto;
 import com.smartjobandina.user.domain.dto.UserDto;
 
@@ -18,6 +20,13 @@ public interface IUserService {
      * @return user registered
      */
     RegisterResponseDto registerUser(UserDto userDto);
+
+    /**
+     * Authenticate user
+     * @param request user credentials
+     * @return response tokens
+     */
+    AuthenticationResponseDto authenticateUser(AuthenticationRequestDto request);
 
 
     /**

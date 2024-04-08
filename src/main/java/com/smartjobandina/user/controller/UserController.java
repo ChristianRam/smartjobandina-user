@@ -46,4 +46,16 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto<>(userService.registerUser(userDto),
                 MESSAGE_OPERATION_SUCCESSFUL));
     }
+
+    /**
+     * Authenticate a user
+     * @param request user credentials
+     * @return response tokens
+     */
+    @PostMapping(ResourceEndpoint.AUTHENTICATE)
+    public ResponseEntity<AuthenticationResponseDto> authenticate(
+            @RequestBody AuthenticationRequestDto request
+    ) {
+        return ResponseEntity.ok(userService.authenticateUser(request));
+    }
 }

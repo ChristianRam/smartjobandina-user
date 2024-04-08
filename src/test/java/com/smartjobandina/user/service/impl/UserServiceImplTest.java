@@ -2,12 +2,15 @@ package com.smartjobandina.user.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static com.smartjobandina.user.util.UserTestBuilder.*;
 
 import com.smartjobandina.user.config.JwtService;
 import com.smartjobandina.user.domain.Token;
 import com.smartjobandina.user.domain.User;
+import com.smartjobandina.user.domain.dto.AuthenticationRequestDto;
+import com.smartjobandina.user.domain.dto.AuthenticationResponseDto;
 import com.smartjobandina.user.domain.dto.RegisterResponseDto;
 import com.smartjobandina.user.domain.dto.UserDto;
 import com.smartjobandina.user.exception.EmailAlrealdyRegisteredException;
@@ -23,10 +26,17 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(SpringExtension.class)
 public class UserServiceImplTest {
@@ -42,6 +52,9 @@ public class UserServiceImplTest {
 
     @Spy
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @Mock
+    private AuthenticationManager authenticationManager;
 
     @Mock
     private JwtService jwtService;
@@ -116,5 +129,32 @@ public class UserServiceImplTest {
                 () -> userService.registerUser(userDto));
         //Then
         assertEquals("Invalid password format", exception.getMessage());
+    }
+
+    @Test
+    void givenCorrectAuthenticationRequestDto_WhenCallRegisterUser_ThenReturnObjectSuccessfully() {
+        // Given
+        AuthenticationRequestDto requestDto = buildCorrectAuthenticationRequestDto();
+        User user = buildCorrectUser();
+        Token token = buildCorrectToken();
+        Authentication authentication = mock(Authentication.class);
+        authentication.setAuthenticated(true);
+        //When
+        when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+        when(userRepository.save(any())).thenReturn(user);
+        when(jwtService.generateToken(any())).thenReturn(ACCESS_TOKEN);
+        when(jwtService.generateRefreshToken(any())).thenReturn(REFRESH_TOKEN);
+        when(tokenRepository.findAllValidTokenByUser(any())).thenReturn(List.of(token));
+        when(tokenRepository.saveAll(any())).thenReturn(List.of(token));
+        when(tokenRepository.save(any())).thenReturn(token);
+        when(authentication.isAuthenticated()).thenReturn(true);
+
+        when(authenticationManager.authenticate(any())).thenReturn(authentication);
+
+        AuthenticationResponseDto responseDto = userService.authenticateUser(requestDto);
+
+        //Then
+        assertEquals(ACCESS_TOKEN, responseDto.getAccessToken());
+        assertEquals(REFRESH_TOKEN, responseDto.getRefreshToken());
     }
 }

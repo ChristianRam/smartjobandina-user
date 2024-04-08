@@ -4,6 +4,8 @@ import com.smartjobandina.user.config.JwtService;
 import com.smartjobandina.user.domain.Token;
 import com.smartjobandina.user.domain.TokenType;
 import com.smartjobandina.user.domain.User;
+import com.smartjobandina.user.domain.dto.AuthenticationRequestDto;
+import com.smartjobandina.user.domain.dto.AuthenticationResponseDto;
 import com.smartjobandina.user.domain.dto.RegisterResponseDto;
 import com.smartjobandina.user.domain.dto.UserDto;
 import com.smartjobandina.user.exception.EmailAlrealdyRegisteredException;
@@ -17,10 +19,13 @@ import com.smartjobandina.user.util.RegexValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -51,14 +56,16 @@ public class UserServiceImpl implements IUserService {
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
     public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, TokenRepository tokenRepository,
-                           PasswordEncoder passwordEncoder, JwtService jwtService) {
+                           PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.tokenRepository = tokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
     }
 
     /**
@@ -77,6 +84,31 @@ public class UserServiceImpl implements IUserService {
         saveUserToken(user, jwtToken);
 
         return userMapper.userToRegisterResponseDto(user, jwtToken, refreshToken);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public AuthenticationResponseDto authenticateUser(AuthenticationRequestDto request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow();
+        String jwtToken = jwtService.generateToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+        revokeAllUserTokens(user);
+        saveUserToken(user, jwtToken);
+
+        user.setLastLogin(LocalDateTime.now());
+        userRepository.save(user);
+        return AuthenticationResponseDto.builder()
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
     /**
@@ -113,8 +145,13 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
+    /**
+     * Save a user token
+     * @param user user data
+     * @param jwtToken token
+     */
     private void saveUserToken(User user, String jwtToken) {
-        var token = Token.builder()
+        Token token = Token.builder()
                 .user(user)
                 .token(jwtToken)
                 .tokenType(TokenType.BEARER)
@@ -122,5 +159,20 @@ public class UserServiceImpl implements IUserService {
                 .revoked(false)
                 .build();
         tokenRepository.save(token);
+    }
+
+    /**
+     * Revoke all tokens of user
+     * @param user user data
+     */
+    private void revokeAllUserTokens(User user) {
+        List<Token> validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
+        if (validUserTokens.isEmpty())
+            return;
+        validUserTokens.forEach(token -> {
+            token.setExpired(true);
+            token.setRevoked(true);
+        });
+        tokenRepository.saveAll(validUserTokens);
     }
 }

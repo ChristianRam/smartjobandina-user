@@ -1,6 +1,7 @@
 package com.smartjobandina.user.util;
 
 import com.smartjobandina.user.domain.*;
+import com.smartjobandina.user.domain.dto.AuthenticationRequestDto;
 import com.smartjobandina.user.domain.dto.PhoneDto;
 import com.smartjobandina.user.domain.dto.UserDto;
 
@@ -51,6 +52,13 @@ public class UserTestBuilder {
                 .revoked(false)
                 .expired(false)
                 .user(buildCorrectUser())
+                .build();
+    }
+
+    public static AuthenticationRequestDto buildCorrectAuthenticationRequestDto() {
+        return AuthenticationRequestDto.builder()
+                .email("christianram1906@gmail.com")
+                .password("Steven.8912")
                 .build();
     }
 }

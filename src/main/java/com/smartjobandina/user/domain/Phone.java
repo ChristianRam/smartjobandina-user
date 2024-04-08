@@ -11,7 +11,8 @@ import org.hibernate.annotations.UuidGenerator;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "phones")
+@Entity
+@Table(name = "phones")
 public class Phone {
 
     @Id
