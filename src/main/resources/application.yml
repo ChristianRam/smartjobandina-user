@@ -18,12 +18,14 @@ spring:
 server:
   port: 8080
 
+# Custom user config
 user:
   password:
     regex: '^(?=.*[0-9])(?=.*[a-zA-Z]).{7,}$'
   email:
     regex: '^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$'
 
+# Jwt config
 application:
   security:
     jwt:

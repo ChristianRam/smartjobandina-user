@@ -27,4 +27,5 @@ Project built in Spring Boot with user functionalities.
 Acces to Swagger UI using endpoint `/swagger-ui/index.html` in root URI
 
 ## Notes
-- In project root directory there is a postman collection to test endpoints
+- In project root directory there is a postman collection to test endpoints and class diagram
+- In resources there is schema.sql
